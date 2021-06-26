@@ -7,23 +7,32 @@ import librosa
 import glob
 from helper import draw_embed, create_spectrogram, read_audio, record, save_record, predict, predicitons_plot
 
+# st.set_page_config(layout="wide")
+
+st.set_page_config("Speech emotion detection", "./assets/img/unipi_logo.png")
 
 st.markdown(
         f"""
 <style>
     .reportview-container .main .block-container{{
         max-width: 1200px;
-        padding-top: 10rem;
-        padding-right: 10rem;
-        padding-left: 10rem;
-        padding-bottom: 10rem;
+        padding-top: 2rem;
+        padding-right: 2rem;
+        padding-left: 2rem;
+        padding-bottom: 2rem;
+    }}
+    header {{
+        visibility: hidden;
+    }}
+    footer {{
+        visibility: hidden;
     }}
 </style>
 """,
         unsafe_allow_html=True,
     )
 
-"# Voice emotion recognition"
+"# Speech emotion recognition"
 
 st.header("1. Record your own voice")
 
@@ -44,15 +53,14 @@ if st.button(f"Click to Record"):
         save_record(path_myrecording, myrecording, fs)
         record_state.text(f"Done! Saved sample as {filename}.wav")
 
-        # Make prediction
-        predictions = predict(path_myrecording)
-
         st.audio(read_audio(path_myrecording))
 
-        fig = create_spectrogram(path_myrecording)
+        # Make prediction
+        predictions = predict(path_myrecording)
+        st.text(predictions)
+        # Plot predictions
+        fig = predicitons_plot(predictions.to_numpy()[0][:-1])
         st.pyplot(fig)
 
-        st.text(predictions)
-
-        fig = predicitons_plot(predictions.to_numpy()[0][:-1])
+        fig = create_spectrogram(path_myrecording)
         st.pyplot(fig)
