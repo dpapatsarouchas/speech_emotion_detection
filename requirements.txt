@@ -5,3 +5,5 @@ streamlit
 numpy
 sounddevice
 wavio
+tensorflow
+mplcairo

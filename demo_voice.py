@@ -5,7 +5,23 @@ import soundfile as sf
 import os
 import librosa
 import glob
-from helper import draw_embed, create_spectrogram, read_audio, record, save_record
+from helper import draw_embed, create_spectrogram, read_audio, record, save_record, predict, predicitons_plot
+
+
+st.markdown(
+        f"""
+<style>
+    .reportview-container .main .block-container{{
+        max-width: 1200px;
+        padding-top: 10rem;
+        padding-right: 10rem;
+        padding-left: 10rem;
+        padding-bottom: 10rem;
+    }}
+</style>
+""",
+        unsafe_allow_html=True,
+    )
 
 "# Voice emotion recognition"
 
@@ -19,16 +35,24 @@ if st.button(f"Click to Record"):
     else:
         record_state = st.text("Recording...")
         duration = 5  # seconds
-        fs = 48000
+        fs = 22050
         myrecording = record(duration, fs)
-        record_state.text(f"Saving sample as {filename}.mp3")
+        record_state.text(f"Saving sample as {filename}.wav")
 
-        path_myrecording = f"./samples/{filename}.mp3"
+        path_myrecording = f"./samples/{filename}.wav"
 
         save_record(path_myrecording, myrecording, fs)
-        record_state.text(f"Done! Saved sample as {filename}.mp3")
+        record_state.text(f"Done! Saved sample as {filename}.wav")
+
+        # Make prediction
+        predictions = predict(path_myrecording)
 
         st.audio(read_audio(path_myrecording))
 
         fig = create_spectrogram(path_myrecording)
+        st.pyplot(fig)
+
+        st.text(predictions)
+
+        fig = predicitons_plot(predictions.to_numpy()[0][:-1])
         st.pyplot(fig)
