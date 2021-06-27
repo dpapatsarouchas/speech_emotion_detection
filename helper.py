@@ -12,6 +12,9 @@ import pandas as pd
 import soundfile as sf
 from tensorflow.keras.models import model_from_json
 
+from scipy.io.wavfile import read as sread, write as swrite
+import io
+
 # Create a configuration class to help if I want to change parameters later
 class Config:
     def __init__(self, n_mfcc = 26, n_feat = 13, n_fft = 552, sr = 22050, window = 0.4, test_shift = 0.1):
@@ -95,10 +98,10 @@ def save_record(path_myrecording, myrecording, fs):
     with open(path_myrecording, 'w') as new_file:
         sf.write(path_myrecording, myrecording, fs)
     # wavio.write(path_myrecording, myrecording, fs, sampwidth=2)
-    wav, sr = librosa.load(path_myrecording)
-    wav = envelope(wav, sr, 0.05) # @TODO play with threshold
-    with open(path_myrecording, 'w') as new_file:
-        sf.write(path_myrecording, wav, fs)
+    # wav, sr = librosa.load(path_myrecording)
+    # wav = envelope(wav, sr, 0.05) # @TODO play with threshold
+    # with open(path_myrecording, 'w') as new_file:
+    #     sf.write(path_myrecording, wav, fs)
     return None
 
 ######################
@@ -171,12 +174,9 @@ def predict(audio_path):
 
 
 def predicitons_plot(data):
-    # freqs = [301, 96, 53, 81, 42]
-
     fig, ax = plt.subplots()
 
     labels = ['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised']
-    # labels = ['neutral']*7
     p1 = ax.bar(np.arange(len(labels)), data, 0.8, color="yellow")
     plt.ylim(0, plt.ylim()[1]+0.5)
 
@@ -188,7 +188,7 @@ def predicitons_plot(data):
         height = rect1.get_height()
 
         ab = AnnotationBbox(imagebox,
-                            (rect1.get_x() + rect1.get_width()/2, height+0.12),
+                            (rect1.get_x() + rect1.get_width()/2, height+0.2),
                             bboxprops=dict(edgecolor="white")
                             )
 

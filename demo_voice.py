@@ -21,12 +21,12 @@ st.markdown(
         padding-left: 2rem;
         padding-bottom: 2rem;
     }}
-    header {{
-        visibility: hidden;
-    }}
-    footer {{
-        visibility: hidden;
-    }}
+    # header {{
+    #     visibility: hidden;
+    # }}
+    # footer {{
+    #     visibility: hidden;
+    # }}
 </style>
 """,
         unsafe_allow_html=True,
