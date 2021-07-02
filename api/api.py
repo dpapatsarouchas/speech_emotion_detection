@@ -16,7 +16,7 @@ def index():
 def save_audio():
     if request.method == "POST":
         f = request.files['audio_data']
-        f.save('../samples/audio.wav')
+        f.save('../samples/sample.wav')
 
         # with open('../samples/audio.wav', 'w') as audio:
         #     sf.write("../samples/audio.wav", f, 44100)
