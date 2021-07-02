@@ -1,7 +1,6 @@
 # Speech emotion detection
 
-## Instalation
-
+## Setup and run
 ```
 1. Compile frontend
 >> cd components/my_component/frontend
