@@ -14,7 +14,7 @@ my_component = components.declare_component("my_component",
 
 # st.set_page_config(layout="wide")
 
-st.set_page_config("Speech emotion detection", "./assets/img/unipi_logo.png")
+st.set_page_config("Speech Emotion Detection", "./assets/img/unipi_logo.png")
 
 st.markdown(
         f"""

@@ -83,8 +83,15 @@ def create_spectrogram(voice_sample):
     return fig
 
 def read_audio(file):
+    # uncoment to transform the audio on the player
+    # wav, sr = librosa.load(file)
+    # wav = envelope(wav, sr, 0.02) # @TODO play with threshold
+    # with open(file, 'w') as new_file:
+    #     sf.write(file, wav, sr)
+
     with open(file, "rb") as audio_file:
         audio_bytes = audio_file.read()
+
     return audio_bytes
 
 def record(duration=5, fs=48000):
@@ -133,6 +140,7 @@ def predict(audio_path):
 
     # Load the file
     wav, sr = librosa.load(audio_path)
+    wav = envelope(wav, sr, 0.02)
 
     # Create an array to hold features for each window
     X = []
