@@ -102,8 +102,8 @@ class MyComponent extends StreamlitComponentBase<State> {
     };
     var fd=new FormData();
     fd.append("audio_data",recordedBlob.blob, 'test.wav');
-    // xhr.open("POST","http://localhost:5000/api/save_audio",true);
-    xhr.open("POST","/api/save_audio",true);
+    const prefix = window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1") ? "http://localhost:5000" : "";
+    xhr.open("POST",prefix + "/api/save_audio",true);
     xhr.send(fd);
   }
 }
