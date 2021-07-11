@@ -57,7 +57,7 @@ class MyComponent extends StreamlitComponentBase<State> {
     // variable, and send its new value back to Streamlit, where it'll
     // be available to the Python program.
     return (
-      <div>
+      <div className="text-center">
         <ReactMic
           record={this.state.record}
           className="sound-wave"
@@ -65,10 +65,12 @@ class MyComponent extends StreamlitComponentBase<State> {
           onStop={this.onStop}
           onData={this.onData}
           channelCount={1}
-          strokeColor="#000000"
-          backgroundColor="#FFFFFF" />
-        <button onClick={this.startRecording} type="button">Start</button>
-        <button onClick={this.stopRecording} type="button">Stop</button>
+          strokeColor="#a22631"
+          backgroundColor="#222c54" />
+        <div className="md-12">
+          <button className="btn btn-success btn-lg btn-block" onClick={this.startRecording} type="button">Start</button>
+          <button className="btn btn-danger btn-lg btn-block" onClick={this.stopRecording} type="button">Stop</button>
+        </div>
       </div>
 
     )

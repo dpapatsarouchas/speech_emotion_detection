@@ -4,6 +4,7 @@ from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage,
                                   AnnotationBbox)
 from matplotlib.cbook import get_sample_data
 import librosa
+import librosa.display
 from pathlib import Path
 import sounddevice as sd
 import wavio
@@ -82,10 +83,82 @@ def create_spectrogram(voice_sample):
     # plt.savefig(voice_sample.split(".")[0] + "_spectogram.png")
     return fig
 
+def create_chart(voice_sample, type="spectrogram"):
+    in_fpath = Path(voice_sample.replace('"', "").replace("'", ""))
+    original_wav, sampling_rate = librosa.load(str(in_fpath))
+
+    fig = plt.figure(figsize=(10,4))
+
+    if type=="waveform":
+        plt.subplot(111)
+        plt.title(f"Spectrogram of file {voice_sample}")
+        plt.plot(original_wav)
+        plt.xlabel("Sample")
+        plt.ylabel("Amplitude")
+    
+    if type=="spectrogram":
+        plt.subplot(111)
+        plt.specgram(original_wav, Fs=sampling_rate)
+        plt.xlabel("Time")
+        plt.ylabel("Frequency")
+    
+    if type=="mel":
+        plt.subplot(111)
+        S = librosa.feature.melspectrogram(original_wav, sr=sampling_rate, n_mels=128)
+        log_S = librosa.power_to_db(S, ref=np.max)
+        # plt.figure(figsize=(12, 4))
+        librosa.display.specshow(log_S, sr=sampling_rate, x_axis='time', y_axis='mel')
+        plt.title('Mel power spectrogram ')
+        plt.colorbar(format='%+02.0f dB')
+
+    if type=="mfcc":
+        plt.subplot(111)
+        mfcc1 = librosa.feature.mfcc(original_wav,sampling_rate,n_mfcc = 26, n_fft = 552, hop_length = 552)
+        # plt.figure(figsize=(10, 4))
+        librosa.display.specshow(mfcc1[1:13], x_axis='time', cmap = 'inferno')
+        plt.colorbar()
+    return fig
+
+def create_charts(voice_sample):
+    in_fpath = Path(voice_sample.replace('"', "").replace("'", ""))
+    original_wav, sampling_rate = librosa.load(str(in_fpath))
+
+    fig = plt.figure(figsize=(10,14))
+    
+    plt.subplot(411)
+    plt.title(f"Waveform")
+    plt.plot(original_wav)
+    plt.xlabel("Sample")
+    plt.ylabel("Amplitude")
+    plt.tight_layout(pad=2.0)
+    
+    plt.subplot(412)
+    plt.title(f"Spectrogram")
+    plt.specgram(original_wav, Fs=sampling_rate)
+    plt.xlabel("Time")
+    plt.ylabel("Frequency")
+    plt.tight_layout(pad=2.0)
+    
+    plt.subplot(413)
+    S = librosa.feature.melspectrogram(original_wav, sr=sampling_rate, n_mels=128)
+    log_S = librosa.power_to_db(S, ref=np.max)
+    librosa.display.specshow(log_S, sr=sampling_rate, x_axis='time', y_axis='mel')
+    plt.title('Mel power spectrogram ')
+    plt.colorbar(format='%+02.0f dB')
+    plt.tight_layout(pad=2.0)
+
+    plt.subplot(414)
+    mfcc1 = librosa.feature.mfcc(original_wav,sampling_rate,n_mfcc = 26, n_fft = 552, hop_length = 552)
+    plt.title('MFCC ')
+    librosa.display.specshow(mfcc1[1:13], x_axis='time', cmap = 'inferno')
+    plt.colorbar()
+    plt.tight_layout(pad=2.0)
+    return fig
+
 def read_audio(file):
     # uncoment to transform the audio on the player
     # wav, sr = librosa.load(file)
-    # wav = envelope(wav, sr, 0.02) # @TODO play with threshold
+    # wav = envelope(wav, sr, 0.0005) # @TODO play with threshold
     # with open(file, 'w') as new_file:
     #     sf.write(file, wav, sr)
 
@@ -140,7 +213,7 @@ def predict(audio_path):
 
     # Load the file
     wav, sr = librosa.load(audio_path)
-    wav = envelope(wav, sr, 0.02)
+    wav = envelope(wav, sr, 0.0005)
 
     # Create an array to hold features for each window
     X = []
@@ -169,14 +242,14 @@ def predict(audio_path):
     local_results = list(local_results)
     # Final prediction
     prediction = np.argmax(local_results)
-    labels = ['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised']
+    labels = ['Neutral', 'Happy', 'Sad', 'Angry', 'Fearful', 'Disgusted', 'Surprised', 'Prediction']
     local_results.append(labels[prediction])
     all_results.append(local_results)
 
 
     
     # Turn all results into a dataframe
-    df_cols = ['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised', 'prediction']
+    df_cols = ['Neutral', 'Happy', 'Sad', 'Angry', 'Fearful', 'Disgusted', 'Surprised', 'Prediction']
     all_results = pd.DataFrame(all_results, columns = df_cols)
     return all_results
 
@@ -184,9 +257,10 @@ def predict(audio_path):
 def predicitons_plot(data):
     fig, ax = plt.subplots()
 
-    labels = ['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised']
+    labels = ['Neutral', 'Happy', 'Sad', 'Angry', 'Fearful', 'Disgusted', 'Surprised']
     p1 = ax.bar(np.arange(len(labels)), data, 0.8, color="yellow")
     plt.ylim(0, plt.ylim()[1]+0.5)
+    plt.xticks(np.arange(len(labels)), labels, fontsize=8)
 
     for rect1, label in zip(p1, labels):
         arr_img = plt.imread(f'./assets/img/{label}_bob_min.png', format='png')
