@@ -24,7 +24,6 @@ my_component = components.declare_component("my_component",
 
 st.set_page_config("Speech Emotion Detection", "./assets/img/unipi_logo.png")
 
-local_css("./assets/css/main.css")
 remote_css("https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css")
 
 st.markdown(
